@@ -41,8 +41,9 @@ def create_short_url(request):
             return HttpResponse(reverse('api:shortened_url', args=[url_info.short_url]))
         return render(request, 'api/index.html')
     
-class ShortenedURLView(generic.DetailView):
+class ShortenedURLView(generic.View):
     model = urls
     template_name = 'api/shortened_url.html'
-    slug_field = 'short_url'
-    slug_url_kwarg = 'short_url'
+    def get(self, request, short_url):
+        url_info = get_object_or_404(urls, short_url=short_url)
+        return render(request, self.template_name, {'url': url_info})

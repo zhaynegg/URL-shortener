@@ -3,12 +3,6 @@
         <title>URL Shortener API</title>   
     </head>
     <body>
-        <h1>Short URL created</h1>
-        <p>Your short URL is: <a href="{{ original_url }}">{{ original_url }}</a></p>
-        <form action="{% url 'api:create_short_url' %}" method="post">
-            {% csrf_token %}
-            <input type="text" name="original_url" placeholder="Enter URL to shorten">
-            <button type="submit">Shorten</button>
-        </form>
+        <p>Redirect: <a href="{{ original_url }}">{{ original_url }}</a></p>
     </body>
 </html>

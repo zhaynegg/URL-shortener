@@ -6,7 +6,7 @@
         <h1>URL shortener</h1>
         <form action="{% url 'api:create_short_url' %}" method="post">
             {% csrf_token %}
-            <input type="text" name="longurl" placeholder="Enter URL to shorten">
+            <input type="text" name="original_url" placeholder="Enter URL to shorten">
             <button type="submit">Shorten</button>
         </form>
     </body>

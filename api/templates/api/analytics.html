@@ -1,0 +1,14 @@
+<html>
+    <head>
+
+    </head>
+    <body>
+        <h1>All links</h1>
+        <div>
+            {% for url in urls %}
+            <li>Short url:   {{ url.short_url }}</li>
+            <li>Long url:   {{ url.original_url}} </li>
+            {% endfor %}
+        </div>
+    </body>
+</html>

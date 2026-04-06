@@ -11,9 +11,10 @@ from django.views import generic
 class IndexView(generic.TemplateView):
     template_name = 'api/index.html'
 
-class AnalyticsView(generic.DetailView):
+class AnalyticsView(generic.ListView):
     model = urls
     template_name = 'api/analytics.html'
+    context_object_name = "urls"
 
 class RedirectView(generic.View):
     def get(self, request, short_url):
@@ -24,7 +25,6 @@ class RedirectView(generic.View):
             return redirect(url_info.original_url)
         except urls.DoesNotExist:
             raise Http404("Short URL does not exist")
-        
 
 def generate_short_url():
     short_url = ""

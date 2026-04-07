@@ -71,10 +71,14 @@ class IndexView(LoginRequiredMixin, generic.TemplateView):
         
 
 
-class AnalyticsView(generic.ListView):
+class AnalyticsView(LoginRequiredMixin, generic.ListView):
     model = urls
     template_name = 'api/analytics.html'
-    context_object_name = "urls"
+    context_object_name = 'urls'
+    def get_queryset(self):
+        current_username = self.request.session.get("username")
+        return urls.objects.filter(user_username=current_username)
+
 
 class RedirectView(generic.View):
     def get(self, request, short_url):
@@ -101,12 +105,12 @@ def create_short_url(request):
                 url_info = urls.objects.get(original_url = original_url)
             else:
                 short_url = generate_short_url(original_url)
-                url_info = urls.objects.create(original_url=original_url, short_url=short_url)
+                url_info = urls.objects.create(original_url=original_url, short_url=short_url, user_username=request.session["username"])
             return render(request, 'api/shortened_url.html', {'url': url_info})
         
         return render(request, 'api/index.html')
     
-class ShortenedURLView(generic.View):
+class ShortenedURLView(LoginRequiredMixin, generic.View):
     model = urls
     template_name = 'api/shortened_url.html'
     def get(self, request, short_url):

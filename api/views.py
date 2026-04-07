@@ -14,6 +14,9 @@ from .supabase_client import supabase
 from django.contrib import messages
 
 def login_view(request):
+    if request.session.get("supabase_access_token"):
+        return redirect("api:index")
+
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get("password")
@@ -49,6 +52,9 @@ def login_view(request):
 
 
 def register_view(request):
+    if request.session.get("supabase_access_token"):
+        return redirect("api:index")
+    
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get("password")

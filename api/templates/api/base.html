@@ -1,0 +1,168 @@
+<html>
+    <head>
+        <title>Url Shortener</title>
+        <!-- AI created designs -->
+        <style>
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                background: #f0f2f5;
+                color: #333;
+            }
+
+            /* Navbar */
+            nav {
+                background-color: #4a76a8;
+                padding: 15px 30px;
+                display: flex;
+                align-items: center;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            }
+
+            nav a {
+                color: white;
+                margin-right: 20px;
+                text-decoration: none;
+                font-weight: 500;
+                transition: color 0.3s;
+            }
+
+            nav a:hover {
+                color: #ffdd57;
+            }
+
+            .container {
+                max-width: 800px;
+                margin: 40px auto;
+                background: white;
+                padding: 40px;
+                border-radius: 12px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            }
+
+            h1, h2 {
+                margin-bottom: 20px;
+                color: #4a76a8;
+            }
+
+            p {
+                line-height: 1.6;
+                margin-bottom: 15px;
+            }
+
+            /* Forms & Inputs */
+            form.shorten-form {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+
+            input[type="text"] {
+                flex: 1;
+                padding: 12px 15px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                font-size: 16px;
+                outline: none;
+                transition: border-color 0.3s;
+            }
+
+            input[type="text"]:focus {
+                border-color: #4a76a8;
+                box-shadow: 0 0 0 2px rgba(74, 118, 168, 0.2);
+            }
+
+            button, input[type="submit"], .btn {
+                background-color: #4a76a8;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 6px;
+                font-size: 16px;
+                cursor: pointer;
+                transition: background 0.3s;
+                font-weight: 500;
+            }
+
+            button:hover, input[type="submit"]:hover, .btn:hover {
+                background-color: #365f8b;
+            }
+
+            /* URL List Cards */
+            .url-list {
+                list-style: none;
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .url-card {
+                background: #f8f9fa;
+                padding: 20px;
+                border-radius: 8px;
+                border-left: 5px solid #4a76a8;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+
+            .url-card .link-row {
+                margin-bottom: 8px;
+            }
+
+            .url-card .link-row:last-child {
+                margin-bottom: 0;
+            }
+
+            .label {
+                font-weight: 600;
+                color: #666;
+                margin-right: 10px;
+            }
+
+            .url-link {
+                color: #4a76a8;
+                text-decoration: none;
+                word-break: break-all;
+            }
+
+            .url-link:hover {
+                text-decoration: underline;
+            }
+
+            .result-box {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                background: #e8f0fe;
+                padding: 15px 25px;
+                border-radius: 8px;
+                margin-top: 15px;
+                border: 1px dashed #4a76a8;
+            }
+
+            .result-box p {
+                margin: 0;
+                font-family: monospace;
+                font-size: 1.2em;
+                color: #333;
+            }
+        </style>
+    </head>
+    <body>
+        <nav>
+            <a href="{% url 'api:index' %}">Home</a>
+            <a href="{% url 'api:analytics' %}">Analytics</a>
+            <a href="{% url 'api:logout' %}">Logout</a>
+
+        </nav>
+
+        <div class ="container">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </body>
+</html>

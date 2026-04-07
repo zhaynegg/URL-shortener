@@ -1,12 +1,10 @@
-<html>
-    <head>
-        <title>URL Shortener API</title>   
-    </head>
-    <body>
-        <h1>Your short URL</h1>
-        <form action="">
-            <label for=""><p> {{ url.short_url }} </p></label>
+{% extends "api/base.html" %}
+{% block content %}
+    <h1>Success!</h1>
+    <div class="result-box">
+        <p>{{ url.short_url }}</p>
+        <form action="" style="margin: 0;">
             <button type="submit">Copy</button>
         </form>
-    </body>
-</html>
+    </div>
+{% endblock %}

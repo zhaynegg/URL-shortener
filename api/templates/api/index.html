@@ -1,17 +1,12 @@
-<html>
-    <head>
-        <title>URL Shortener API</title>   
-    </head>
-    <body>
-        <h1>URL shortener</h1>
-        <form action="{% url 'api:create_short_url' %}" method="post">
-            {% csrf_token %}
-            <input type="text" name="original_url" placeholder="Enter URL to shorten">
-            <button type="submit">Shorten</button>
-        </form>
-        <form action="{% url 'api:logout' %}">
-            {% csrf_token %}
-            <button type="submit">Exit</button>
-        </form>
-    </body>
-</html>
+{% extends "api/base.html" %}
+
+{% block content %}
+    <h1>Shorten a URL</h1>
+    <p>Paste your long URL below to create a concise, shareable link.</p>
+    
+    <form class="shorten-form" action="{% url 'api:create_short_url' %}" method="post">
+        {% csrf_token %}
+        <input type="text" name="original_url" placeholder="https://example.com/very/long/path..." required>
+        <button type="submit">Shorten</button>
+    </form>
+{% endblock %}

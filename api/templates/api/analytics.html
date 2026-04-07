@@ -1,14 +1,20 @@
-<html>
-    <head>
-
-    </head>
-    <body>
-        <h1>All your links</h1>
-        <div>
-            {% for url in urls %}
-            <li>Short url:   {{ url.short_url }}</li>
-            <li>Long url:   {{ url.original_url}} </li>
-            {% endfor %}
-        </div>
-    </body>
-</html>
+{% extends "api/base.html" %}
+{% block content %}
+    <h1>Your Links</h1>
+    <ul class="url-list">
+        {% for url in urls %}
+        <li class="url-card">
+            <div class="link-row">
+                <span class="label">Short URL:</span>
+                <a class="url-link" href="{{ url.short_url }}" target="_blank">{{ url.short_url }}</a>
+            </div>
+            <div class="link-row">
+                <span class="label">Long URL:</span>
+                <a class="url-link" href="{{ url.original_url }}" target="_blank">{{ url.original_url }}</a>
+            </div>
+        </li>
+        {% empty %}
+        <p>You haven't shortened any URLs yet.</p>
+        {% endfor %}
+    </ul>
+{% endblock %}

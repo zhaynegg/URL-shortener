@@ -95,7 +95,11 @@ class AnalyticsView(SupabaseLoginRequiredMixin, generic.ListView):
     context_object_name = 'urls'
     def get_queryset(self):
         current_username = self.request.session.get("username")
-        return urls.objects.filter(user_username=current_username)
+        query = urls.objects.filter(user_username=current_username)
+        for url in query:
+            url.short_url = self.request.build_absolute_uri(f'/redirect/{url.short_url}')
+
+        return query
 
 
 class RedirectView(generic.View):
@@ -124,6 +128,7 @@ def create_short_url(request):
             else:
                 short_url = generate_short_url(original_url)
                 url_info = urls.objects.create(original_url=original_url, short_url=short_url, user_username=request.session["username"])
+                url_info.short_url = request.build_absolute_uri(f'/redirect/{url_info.short_url}')
             return render(request, 'api/shortened_url.html', {'url': url_info})
         
         return render(request, 'api/index.html')

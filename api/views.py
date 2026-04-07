@@ -66,18 +66,20 @@ def register_view(request):
         email = request.POST.get("email")
         password = request.POST.get("password")
         username = request.POST.get("username")
- 
-        response = supabase.auth.sign_up({"email": email, "password": password})
-        user = response.user
-        if not user:
-            raise Exception("User creation failed")
+        try:
+            response = supabase.auth.sign_up({"email": email, "password": password})
+            user = response.user
+            if not user:
+                raise Exception("User creation failed")
+            
+            supabase.table("profile").insert({
+                    "id": user.id,
+                    "username": username,
+            }).execute()
+            return redirect('api:login')
+        except Exception as e:
+            return render(request, 'api/register.html', {'error': str(e)})
         
-        supabase.table("profile").insert({
-                "id": user.id,
-                "username": username,
-        }).execute()
-
-        return redirect('api:login')
     return render(request, "api/register.html")
 
 def logout_view(request):

@@ -6,7 +6,7 @@
 
     <form class="auth-form" method="POST" action="{% url 'api:register' %}">
         {% csrf_token %}
-        
+        <p>{{ error }}</p>
         <label for="username">Username:</label>
         <input type="text" name="username" id="username" required>
 

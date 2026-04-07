@@ -9,4 +9,6 @@ urlpatterns = [
     path('redirect/<str:short_url>/', views.RedirectView.as_view(), name='redirect'),
     path('create/', views.create_short_url, name='create_short_url'), 
     path('shortened/<str:short_url>/', views.ShortenedURLView.as_view(), name='shortened_url'),
+    path('login/', views.login_view, name='login'),
+    path('register/', views.register_view, name='register'),
 ]

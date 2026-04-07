@@ -4,13 +4,72 @@ import xxhash
 from urllib import request
 
 from django.shortcuts import redirect, render, get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponse
 from django.urls import reverse
 from .models import urls
 from django.views import generic
+from django.views.decorators.csrf import csrf_exempt
+from .supabase_client import supabase
+from django.contrib import messages
 
-class IndexView(generic.TemplateView):
+def login_view(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        response = supabase.auth.sign_in_with_password({"email": email, "password": password})
+        if not response.user:
+            messages.error(request, "Invalid credentials")
+            return render(request, "api/login.html")
+
+        if not response.user.confirmed_at:
+            messages.error(request, "Please confirm your email first")
+            return render(request, "api/login.html")
+        user = response.user
+        session = response.session
+
+        print(user.id)
+        nw_response = (
+            supabase.table("profile")
+            .select("username")
+            .eq("id", user.id)
+            .maybe_single()
+            .execute()
+        )
+
+        username = nw_response.data["username"]
+        request.session["user_email"] = email
+        request.session["username"] = username
+        request.session["supabase_access_token"] = session.access_token
+        return redirect('api:index')
+    return render(request, "api/login.html")
+
+
+def register_view(request):
+    if request.method == "POST":
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        username = request.POST.get("username")
+ 
+        response = supabase.auth.sign_up({"email": email, "password": password})
+        user = response.user
+        if not user:
+            raise Exception("User creation failed")
+        
+        supabase.table("profile").insert({
+                "id": user.id,
+                "username": username,
+        }).execute()
+
+        return redirect('api:login')
+    return render(request, "api/register.html")
+
+
+class IndexView(LoginRequiredMixin, generic.TemplateView):
     template_name = 'api/index.html'
+        
+
 
 class AnalyticsView(generic.ListView):
     model = urls

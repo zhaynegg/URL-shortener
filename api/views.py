@@ -4,7 +4,7 @@ import xxhash
 from urllib import request
 
 from django.shortcuts import redirect, render, get_object_or_404
-from django.contrib.auth.mixins import LoginRequiredMixin
+from .mixins import SupabaseLoginRequiredMixin
 from django.http import Http404, HttpResponse
 from django.urls import reverse
 from .models import urls
@@ -19,17 +19,20 @@ def login_view(request):
         password = request.POST.get("password")
 
         response = supabase.auth.sign_in_with_password({"email": email, "password": password})
+        if not response.session:
+            messages.error(request, "Invalid credentials")
+            return render(request, "api/register.html")
+        
         if not response.user:
             messages.error(request, "Invalid credentials")
-            return render(request, "api/login.html")
+            return render(request, "api/register.html")
 
         if not response.user.confirmed_at:
             messages.error(request, "Please confirm your email first")
-            return render(request, "api/login.html")
+            return render(request, "api/register.html")
         user = response.user
         session = response.session
-
-        print(user.id)
+        
         nw_response = (
             supabase.table("profile")
             .select("username")
@@ -37,7 +40,6 @@ def login_view(request):
             .maybe_single()
             .execute()
         )
-
         username = nw_response.data["username"]
         request.session["user_email"] = email
         request.session["username"] = username
@@ -65,13 +67,16 @@ def register_view(request):
         return redirect('api:login')
     return render(request, "api/register.html")
 
+def logout_view(request):
+    request.session.flush()
+    return redirect('api:login')
 
-class IndexView(LoginRequiredMixin, generic.TemplateView):
+class IndexView(SupabaseLoginRequiredMixin, generic.TemplateView):
     template_name = 'api/index.html'
         
 
 
-class AnalyticsView(LoginRequiredMixin, generic.ListView):
+class AnalyticsView(SupabaseLoginRequiredMixin, generic.ListView):
     model = urls
     template_name = 'api/analytics.html'
     context_object_name = 'urls'
@@ -110,7 +115,7 @@ def create_short_url(request):
         
         return render(request, 'api/index.html')
     
-class ShortenedURLView(LoginRequiredMixin, generic.View):
+class ShortenedURLView(SupabaseLoginRequiredMixin, generic.View):
     model = urls
     template_name = 'api/shortened_url.html'
     def get(self, request, short_url):

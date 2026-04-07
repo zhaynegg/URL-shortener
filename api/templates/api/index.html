@@ -9,5 +9,9 @@
             <input type="text" name="original_url" placeholder="Enter URL to shorten">
             <button type="submit">Shorten</button>
         </form>
+        <form action="{% url 'api:logout' %}">
+            {% csrf_token %}
+            <button type="submit">Exit</button>
+        </form>
     </body>
 </html>

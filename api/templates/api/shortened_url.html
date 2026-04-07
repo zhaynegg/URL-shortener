@@ -2,9 +2,20 @@
 {% block content %}
     <h1>Success!</h1>
     <div class="result-box">
-        <p>{{ url.short_url }}</p>
-        <form action="" style="margin: 0;">
-            <button type="submit">Copy</button>
-        </form>
+        <p id = "short_url" >{{ url.short_url }}</p>
+        <button onclick="copyText()">Copy</button>
     </div>
+
+    <script>
+        function copyText(){
+            const text = document.getElementById("short_url").innerText
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                console.log("Copied: " + text);
+                })
+                .catch(err => {
+                console.error("Failed to copy text: ", err);
+                });
+        }
+    </script>
 {% endblock %}

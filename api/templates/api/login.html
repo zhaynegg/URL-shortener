@@ -8,7 +8,7 @@
 
     <form class="auth-form" method="POST" action="{% url 'api:login' %}">
         {% csrf_token %}
-        
+        <p>{{ error }}</p>
         <label for="email">Email:</label>
         <input type="email" name="email" id="email" required>
         

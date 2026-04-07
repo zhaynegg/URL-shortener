@@ -20,34 +20,41 @@ def login_view(request):
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get("password")
+        try:
+            response = supabase.auth.sign_in_with_password({"email": email, "password": password})
+            if not response.session:
+                messages.error(request, "Invalid credentials")
+                return render(request, "api/login.html")
+            
+            if not response.user:
+                messages.error(request, "Invalid credentials")
+                return render(request, "api/login.html")
 
-        response = supabase.auth.sign_in_with_password({"email": email, "password": password})
-        if not response.session:
-            messages.error(request, "Invalid credentials")
-            return render(request, "api/register.html")
-        
-        if not response.user:
-            messages.error(request, "Invalid credentials")
-            return render(request, "api/register.html")
+            if not response.user.confirmed_at:
+                messages.error(request, "Please confirm your email first")
+                return render(request, "api/login.html")
+            user = response.user
+            session = response.session
+            
+            nw_response = (
+                supabase.table("profile")
+                .select("username")
+                .eq("id", user.id)
+                .maybe_single()
+                .execute()
+            )
 
-        if not response.user.confirmed_at:
-            messages.error(request, "Please confirm your email first")
-            return render(request, "api/register.html")
-        user = response.user
-        session = response.session
-        
-        nw_response = (
-            supabase.table("profile")
-            .select("username")
-            .eq("id", user.id)
-            .maybe_single()
-            .execute()
-        )
-        username = nw_response.data["username"]
-        request.session["user_email"] = email
-        request.session["username"] = username
-        request.session["supabase_access_token"] = session.access_token
-        return redirect('api:index')
+            if not nw_response.data:
+                messages.error(request, "No such user")
+                return render(request, "api/login.html")
+
+            username = nw_response.data["username"]
+            request.session["user_email"] = email
+            request.session["username"] = username
+            request.session["supabase_access_token"] = session.access_token
+            return redirect('api:index')
+        except Exception as e:
+            return render(request, 'api/login.html', {'error': str(e)})
     return render(request, "api/login.html")
 
 

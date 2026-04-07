@@ -1,10 +1,20 @@
-<form method="POST" action="{% url 'api:login' %}">
-  {% csrf_token %}
-  <label>Email:</label>
-  <input type="email" name="email" required>
-  
-  <label>Password:</label>
-  <input type="password" name="password" required>
-  
-  <button type="submit">Login</button>
-</form>
+{% extends "api/base.html" %}
+
+{% block content %}
+    <div class="text-center">
+        <h1>Welcome Back</h1>
+        <p>Please log in to your account.</p>
+    </div>
+
+    <form class="auth-form" method="POST" action="{% url 'api:login' %}">
+        {% csrf_token %}
+        
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required>
+        
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" required>
+        
+        <button type="submit">Login</button>
+    </form>
+{% endblock %}

@@ -150,14 +150,54 @@
                 font-size: 1.2em;
                 color: #333;
             }
+            input[type="text"],
+            input[type="email"],
+            input[type="password"] {
+                width: 100%;
+                padding: 12px 15px;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                font-size: 16px;
+                outline: none;
+                transition: border-color 0.3s;
+            }
+
+            input[type="text"]:focus,
+            input[type="email"]:focus,
+            input[type="password"]:focus {
+                border-color: #4a76a8;
+                box-shadow: 0 0 0 2px rgba(74, 118, 168, 0.2);
+            }
+
+            .auth-form {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+
+            .auth-form label {
+                font-weight: 600;
+                color: #4a76a8;
+                margin-bottom: -5px;
+            }
+
+            .text-center {
+                text-align: center;
+            }
         </style>
     </head>
     <body>
         <nav>
-            <a href="{% url 'api:index' %}">Home</a>
-            <a href="{% url 'api:analytics' %}">Analytics</a>
-            <a href="{% url 'api:logout' %}">Logout</a>
-
+            {% if request.session.supabase_access_token %}
+                <a href="{% url 'api:index' %}">Home</a>
+                <a href="{% url 'api:analytics' %}">Analytics</a>
+                <a href="{% url 'api:logout' %}">Logout</a>
+            {% else %}
+                <a href="{% url 'api:login' %}">Login</a>
+                <a href="{% url 'api:register' %}">Registration</a>
+            {% endif %}
         </nav>
 
         <div class ="container">

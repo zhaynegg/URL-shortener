@@ -28,8 +28,24 @@ source venv/bin/activate   # On Windows use: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 ### 4. Configure the project
-You will need to create a project in supabase. In the project itself you will be able to enter the API keys folder. There are your anon and service role keys.
-Do not forget to create your own Secret key and write down in .env file.
+- You will need to create a project in supabase. In the project itself you will be able to enter the API keys folder. There are your anon and service role keys. Also the program uses profile table to store the usernames of users. You need to create table profile(id:uuid, username:varchar). RLS can be turned off. In other case run these sql commands:
+```bash
+alter policy "Allow profile creation"
+on "public"."profile"
+to anon
+with check (
+  true
+);
+```
+```bash
+alter policy "Enable read access for all users"
+on "public"."profile"
+to authenticated
+using (
+  true
+);
+```
+- Do not forget to create your own Secret key and write down in .env file.
 ### 5. Apply database migrations
 ```bash
 python3 manage.py migrate
@@ -38,3 +54,4 @@ python3 manage.py migrate
 ```bash
 python3 manage.py runserver
 ```
+The server will be available at your localhost

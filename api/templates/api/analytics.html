@@ -16,6 +16,10 @@
                 <span class="label">Usage count:</span>
                 <span class="label">{{ url.used_count }}</span>
             </div>
+            <div class="link-row">
+                <span class="label">Created time:</span>
+                <span class="label">{{ url.created_at }}</span>
+            </div>
         </li>
         {% empty %}
         <p>You haven't shortened any URLs yet.</p>

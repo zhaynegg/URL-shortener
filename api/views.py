@@ -130,7 +130,8 @@ def create_short_url(request):
             else:
                 short_url = generate_short_url(original_url)
                 url_info = urls.objects.create(original_url=original_url, short_url=short_url, user_username=request.session["username"])
-                url_info.short_url = request.build_absolute_uri(f'/{url_info.short_url}')
+                
+            url_info.short_url = request.build_absolute_uri(f'/{url_info.short_url}')
             return render(request, 'api/shortened_url.html', {'url': url_info})
         
         return render(request, 'api/index.html')

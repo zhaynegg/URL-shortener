@@ -4,7 +4,7 @@
         <h1>Create an Account</h1>
     </div>
 
-    <form class="auth-form" method="POST" action="{% url 'api:register' %}">
+    <form class="auth-form" method="POST" action="{% url 'api:registration' %}">
         {% csrf_token %}
         <p>{{ error }}</p>
         <label for="username">Username:</label>

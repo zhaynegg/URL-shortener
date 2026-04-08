@@ -58,7 +58,7 @@ def login_view(request):
     return render(request, "api/login.html")
 
 
-def register_view(request):
+def registration_view(request):
     if request.session.get("supabase_access_token"):
         return redirect("api:index")
     
@@ -99,7 +99,7 @@ class AnalyticsView(SupabaseLoginRequiredMixin, generic.ListView):
         current_username = self.request.session.get("username")
         query = urls.objects.filter(user_username=current_username)
         for url in query:
-            url.short_url = self.request.build_absolute_uri(f'/redirect/{url.short_url}')
+            url.short_url = self.request.build_absolute_uri(f'{url.short_url}')
 
         return query
 
@@ -130,7 +130,7 @@ def create_short_url(request):
             else:
                 short_url = generate_short_url(original_url)
                 url_info = urls.objects.create(original_url=original_url, short_url=short_url, user_username=request.session["username"])
-                url_info.short_url = request.build_absolute_uri(f'/redirect/{url_info.short_url}')
+                url_info.short_url = request.build_absolute_uri(f'/{url_info.short_url}')
             return render(request, 'api/shortened_url.html', {'url': url_info})
         
         return render(request, 'api/index.html')
@@ -140,4 +140,5 @@ class ShortenedURLView(SupabaseLoginRequiredMixin, generic.View):
     template_name = 'api/shortened_url.html'
     def get(self, request, short_url):
         url_info = get_object_or_404(urls, short_url=short_url)
+        url_info.short_url = request.build_absolute_uri(f'/{url_info.short_url}')
         return render(request, self.template_name, {'url': url_info})

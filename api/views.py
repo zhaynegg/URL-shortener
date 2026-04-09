@@ -66,11 +66,19 @@ def registration_view(request):
         email = request.POST.get("email")
         password = request.POST.get("password")
         username = request.POST.get("username")
+
         try:
+            if urls.objects.filter(user_username=username).exists():
+                return render(request, "api/register.html", {'error': "Username is not available"})
+            
             response = supabase.auth.sign_up({"email": email, "password": password})
             user = response.user
-            if not user:
-                raise Exception("User creation failed")
+
+            users = supabase.auth.admin.list_users()
+            id_exists = any(u.id == id for u in users)
+
+            if not id_exists:
+                return render(request, "api/register.html")
             
             supabase.table("profile").insert({
                     "id": user.id,

@@ -22,20 +22,15 @@ def login_view(request):
         password = request.POST.get("password")
         try:
             response = supabase.auth.sign_in_with_password({"email": email, "password": password})
-            if not response.session:
-                messages.error(request, "Invalid credentials")
-                return render(request, "api/login.html")
-            
-            if not response.user:
-                messages.error(request, "Invalid credentials")
-                return render(request, "api/login.html")
+            if not response.session or not response.user:
+                return render(request, "api/login.html", {"error": "Invalid credentials"})
 
             if not response.user.confirmed_at:
-                messages.error(request, "Please confirm your email first")
-                return render(request, "api/login.html")
+                return render(request, "api/login.html", {"error": "Please confirm your email first"})
+            
             user = response.user
             session = response.session
-            
+            print(user.id)
             nw_response = (
                 supabase.table("profile")
                 .select("username")
@@ -43,10 +38,11 @@ def login_view(request):
                 .maybe_single()
                 .execute()
             )
-
+            if nw_response is None:
+                return render(request, "api/login.html", {"error": "Database connection error. Please try again."}) 
+            
             if not nw_response.data:
-                messages.error(request, "No such user")
-                return render(request, "api/login.html")
+                return render(request, "api/login.html", {"error": "No such user"})
 
             username = nw_response.data["username"]
             request.session["user_email"] = email
@@ -68,22 +64,18 @@ def registration_view(request):
         username = request.POST.get("username")
 
         try:
-            if urls.objects.filter(user_username=username).exists():
-                return render(request, "api/register.html", {'error': "Username is not available"})
-            
-            response = supabase.auth.sign_up({"email": email, "password": password})
+            response = supabase.auth.sign_up({
+                "email": email,
+                "password": password,
+                "options": {
+                    "data": {
+                        "username": username
+                    }
+                }
+            })
             user = response.user
-
-            users = supabase.auth.admin.list_users()
-            id_exists = any(u.id == id for u in users)
-
-            if not id_exists:
-                return render(request, "api/register.html")
-            
-            supabase.table("profile").insert({
-                    "id": user.id,
-                    "username": username,
-            }).execute()
+            if not user:
+                return render(request, "api/register.html", {"error": "Signup failed"}) 
             return redirect('api:login')
         except Exception as e:
             return render(request, 'api/register.html', {'error': str(e)})

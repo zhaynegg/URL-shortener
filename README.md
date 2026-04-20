@@ -30,20 +30,27 @@ pip install -r requirements.txt
 ### 4. Configure the project
 - You will need to create a project in supabase. In the project itself you will be able to enter the API keys folder. There are your anon and service role keys. Also the program uses profile table to store the usernames of users. You need to create table profile(id:uuid, username:varchar). RLS can be turned off. In other case run these sql commands:
 ```bash
-alter policy "Allow profile creation"
+create policy "Enable read access for all users"
 on "public"."profile"
-to anon
-with check (
-  true
-);
-```
-```bash
-alter policy "Enable read access for all users"
-on "public"."profile"
+as PERMISSIVE
+for SELECT
 to authenticated
 using (
   true
 );
+```
+```bash
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profile (id, username)
+  values (
+    new.id, 
+    new.raw_user_meta_data->>'username'
+  );
+  return new;
+end;
+$$ language plpgsql security definer;
 ```
 - Do not forget to create your own Secret key and write down in .env file.
 ### 5. Apply database migrations

@@ -62,3 +62,8 @@ python3 manage.py migrate
 python3 manage.py runserver
 ```
 The server will be available at your localhost
+
+### 7. If you connect your project to supabase, it may be disabled every week. 
+
+If you furthermore improve it by using Github actions it may disable after two months. 
+This part should to be fixed in the nearest future. If there are some suggestions please tell me. 
